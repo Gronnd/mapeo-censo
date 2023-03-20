@@ -1,5 +1,5 @@
 # Lista de paquetes que se necesitan
-packages <- c("rlang", "httpgd", "leaflet", "sf", "tmap", "tidyverse", "languageserver", "skimr", "viridis", "ggplot2", "mapsf", "cartography")
+packages <- c("scales","viridis","janitor","rlang", "httpgd", "leaflet", "sf", "tmap", "tidyverse", "languageserver", "skimr", "viridis", "ggplot2", "mapsf", "cartography")
 
 # Instalar paquetes faltantes
 packages_needed <- packages[!(packages %in% installed.packages()[,"Package"])]
@@ -18,6 +18,9 @@ zip_file <- list.files(mydir, pattern = ".zip$", full.names = TRUE)
 unzip(zipfile = zip_file, exdir = temp)
 shp_file <- list.files(temp, pattern = ".shp$", full.names = TRUE)
 censales_shp <- sf::read_sf(shp_file)
+
+#convertimos a WGS84
+#censales_shp <- st_transform(censales_shp, '+proj=longlat +datum=WGS84')
 
 
 
@@ -107,8 +110,14 @@ distritos_union$zona <- zonas
 head(distritos_union)
 
 
+
 #importar datos de población
 poblacion <- read.csv("pop.csv", header = TRUE, sep = ";", dec = ",")
+
+
+#limpiar nombres de columnas en poblacion con janitor
+poblacion <- poblacion %>% clean_names()
+
 str(poblacion)
 
 
@@ -122,11 +131,11 @@ prueba <- merge(distritos_union, poblacion, by = "zona", all.x = TRUE)
 #crear mapa de densidad de población
 prueba %>% 
     ggplot() +
-    geom_sf(aes(fill = media_desplazamiento)) +
+    geom_sf(aes(fill = x_de_movilidad_activa_como_medio_principal)) +
     theme_void()+
     theme(legend.position = "bottom")+
-    scale_fill_viridis(option = "mako", name = "% de población", limits=c(2,4))+
-    labs(title = "Densidad de población por zona", subtitle = "Santiago y alrededores")+
+    scale_fill_viridis(option = "mako", name = "Movilidad activa", labels=percent)+
+    labs(title = "Movilidad activa", subtitle = "Santiago y alrededores")+
     theme(plot.title = element_text(size = 30,hjust = 0.5, face = "bold"),
           plot.subtitle = element_text(size = 20,hjust = 0.5, face = "bold"),
           legend.text = element_text(size = 20),
@@ -135,13 +144,63 @@ prueba %>%
     #texto de la leyenda más grnde  
     theme(text = element_text(size = 24)) +
     #leyenda en la derecha
-    theme(legend.position = "right")+
+    theme(legend.position = "right")
 #mover leyenda
-theme(legend.position = c(0.985, 0.35))+
-#add labels to zonas
- geom_sf_label(data = prueba, aes(label = media_desplazamiento), 
-              size = 6, color = "black", inherit.aes = FALSE)
-  #add labels to distritos
-  geom_sf_label(data = prueba, aes(label = zona),
-  size = 6, color = "black", vjust = -0.3, inherit.aes = FALSE)
+#theme(legend.position = c(0.985, 0.35))+
+          #+geom_sf_label(aes(label = paste0(zona,": ", round(x_de_vehiculo_privado_como_medio_principal, 2))),
+#añadir etiquetas con porcentaje
+          #+geom_sf_label(aes(label = paste0(zona,": ", round(x_de_movilidad_activa_como_medio_principal * 100, 2), "%")),size = 6,  color = "black", inherit.aes = FALSE)
+
+
+prueba %>% 
+    ggplot() +
+    geom_sf(aes(fill = x_de_vehiculo_privado_como_medio_principal)) +
+    theme_void()+
+    theme(legend.position = "bottom")+
+    scale_fill_viridis(option = "mako", name = "Vehiculo privado",  labels=percent)+
+    labs(title = "Vehiculo privado", subtitle = "Santiago y alrededores")+
+    theme(plot.title = element_text(size = 30,hjust = 0.5, face = "bold"),
+          plot.subtitle = element_text(size = 20,hjust = 0.5, face = "bold"),
+          legend.text = element_text(size = 20),
+          legend.title = element_text(size= 20))+
+          guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
+    #texto de la leyenda más grnde  
+    theme(text = element_text(size = 24)) +
+    #leyenda en la derecha
+    theme(legend.position = "right")
+#mover leyenda
+#theme(legend.position = c(0.985, 0.35))+
+          #+geom_sf_label(aes(label = paste0(zona,": ", round(x_de_vehiculo_privado_como_medio_principal, 2))),
+#añadir etiquetas con porcentaje
+          #+geom_sf_label(aes(label = paste0(zona,": ", round(x_de_vehiculo_privado_como_medio_principal * 100, 2), "%")),size = 7,  color = "black", inherit.aes = FALSE)
+
+
+
+prueba %>% 
+    ggplot() +
+    geom_sf(aes(fill = x_de_transporte_publico_como_medio_principal)) +
+    theme_void()+
+    theme(legend.position = "bottom")+
+    scale_fill_viridis(option = "mako", name = "Transporte público",  labels=percent)+
+    labs(title = "Transporte público", subtitle = "Santiago y alrededores")+
+    theme(plot.title = element_text(size = 30,hjust = 0.5, face = "bold"),
+          plot.subtitle = element_text(size = 20,hjust = 0.5, face = "bold"),
+          legend.text = element_text(size = 20),
+          legend.title = element_text(size= 20))+
+          guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
+    #texto de la leyenda más grnde  
+    theme(text = element_text(size = 24)) +
+    #leyenda en la derecha
+    theme(legend.position = "right")
+#mover leyenda
+#theme(legend.position = c(0.985, 0.35))+
+          #+geom_sf_label(aes(label = paste0(zona,": ", round(x_de_vehiculo_privado_como_medio_principal, 2))),
+#añadir etiquetas con porcentaje
+          #+geom_sf_label(aes(label = paste0(zona,": ", round(x_de_transporte_publico_como_medio_principal * 100, 2), "%")),size = 7,  color = "black", inherit.aes = FALSE)
+#mapear los datos de población en el datafreme  "prueba" con  el paquete leaflet
+
+
+
+
+
 

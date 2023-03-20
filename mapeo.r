@@ -35,7 +35,7 @@ os_tilos_sh <- censales_shp %>%
 
 #filtro si CUSEC es igual a 1506001005, 1506001001  y llamarlo Sigueiro
 sigueiro_sh <- censales_shp %>% 
-    filter(CUSEC=="1506001005" | CUSEC=="1506001001")>% 
+    filter(CUSEC=="1506001005" | CUSEC=="1506001001") %>% 
     st_union()
 
 #filtro si CUSEC es igual a 1500203005, 1500203006, 1500203008, 1500203009, 15002030013, 1500203014, 1500203016 para milladoiro
@@ -49,31 +49,30 @@ brion_bertamirans_sh <- censales_shp %>%
     st_union()
 
 #crear un objeto sf con los distritos de Santiago
-distrito1 <- santiago_shp %>%
+distrito1 <- censales_shp %>%
   filter(grepl("^Santiago de Compostela", NMUN) & grepl("^01$", CDIS)) %>% 
   st_union()
 
-distrito2 <- santiago_shp %>%
+distrito2 <- censales_shp %>%
   filter(grepl("^Santiago de Compostela", NMUN) & grepl("^02$", CDIS)) %>% 
   st_union()
 
-distrito3 <- santiago_shp %>%
+distrito3 <- censales_shp %>%
   filter(grepl("^Santiago de Compostela", NMUN) & grepl("^03$", CDIS)) %>% 
   st_union()
 
-distrito4 <- santiago_shp %>%
+distrito4 <- censales_shp %>%
   filter(grepl("^Santiago de Compostela", NMUN) & grepl("^04$", CDIS)) %>% 
   st_union()
 
-distrito5 <- santiago_shp %>%
+distrito5 <- censales_shp %>%
   filter(grepl("^Santiago de Compostela", NMUN) & grepl("^05$", CDIS)) %>% 
   st_union()
 
-distrito6 <- santiago_shp %>%
+distrito6 <- censales_shp %>%
   filter(grepl("^Santiago de Compostela", NMUN) & grepl("^06$", CDIS)) %>% 
   st_union()
 
-os_tilos
 
 
 # Extraemos las columnas de geometría de cada objeto sf
@@ -133,12 +132,11 @@ prueba %>%
     theme_void() +
     theme(legend.position = "bottom")+
     scale_fill_viridis(option = "mako", name = "% de población")+
-    labs(title = "Densidad de población por zona", subtitle = "Santiago y alrededores", caption = "Fuente: INE")+
-    theme(plot.title = element_text(size = 40,hjust = 0.5, face = "bold"),
-          plot.subtitle = element_text(size = 30,hjust = 0.5, face = "bold"),
-          plot.caption = element_text(size = 16,hjust = 0.5, face = "bold"),
-          legend.text = element_text(size = 25),
-          legend.title = element_text(size= 25))+
+    labs(title = "Densidad de población por zona", subtitle = "Santiago y alrededores")+
+    theme(plot.title = element_text(size = 30,hjust = 0.5, face = "bold"),
+          plot.subtitle = element_text(size = 20,hjust = 0.5, face = "bold"),
+          legend.text = element_text(size = 20),
+          legend.title = element_text(size= 20))+
     guides(fill = guide_colorbar(barwidth = 2, barheight = 20, title.position = "top"))+
     #texto de la leyenda más grnde  
     theme(text = element_text(size = 24)) +
@@ -147,4 +145,11 @@ prueba %>%
 #mover leyeenda un poco a la izquierda
 theme(legend.position = c(0.965, 0.25))+
 #add labels to zonas
-geom_sf_label(data = prueba, aes(label = zona), size = 6, color = "black", vjust = 0.5, hjust = 0.5, inherit.aes = FALSE)
+geom_sf_label(data = prueba, aes(label = poblacion), size = 6, color = "black", vjust = 0.5, hjust = 0.5, inherit.aes = FALSE)+
+#add labels to distritos
+geom_sf_label_repel(data = prueba, aes(label = zona), size = 6, color = "black", vjust = -0.5, hjust = 0.5, inherit.aes = FALSE)
+
+
+
+devtools::install_github("tidyverse/ggplot2")
+require(ggplot2)

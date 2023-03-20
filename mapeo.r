@@ -135,7 +135,6 @@ prueba %>%
     theme_void()+
     theme(legend.position = "bottom")+
     scale_fill_viridis(option = "mako", name = "Movilidad activa", labels=percent)+
-    labs(title = "Movilidad activa", subtitle = "Santiago y alrededores")+
     theme(plot.title = element_text(size = 30,hjust = 0.5, face = "bold"),
           plot.subtitle = element_text(size = 20,hjust = 0.5, face = "bold"),
           legend.text = element_text(size = 20),
@@ -158,7 +157,6 @@ prueba %>%
     theme_void()+
     theme(legend.position = "bottom")+
     scale_fill_viridis(option = "mako", name = "Vehiculo privado",  labels=percent)+
-    labs(title = "Vehiculo privado", subtitle = "Santiago y alrededores")+
     theme(plot.title = element_text(size = 30,hjust = 0.5, face = "bold"),
           plot.subtitle = element_text(size = 20,hjust = 0.5, face = "bold"),
           legend.text = element_text(size = 20),
@@ -182,7 +180,6 @@ prueba %>%
     theme_void()+
     theme(legend.position = "bottom")+
     scale_fill_viridis(option = "mako", name = "Transporte público",  labels=percent)+
-    labs(title = "Transporte público", subtitle = "Santiago y alrededores")+
     theme(plot.title = element_text(size = 30,hjust = 0.5, face = "bold"),
           plot.subtitle = element_text(size = 20,hjust = 0.5, face = "bold"),
           legend.text = element_text(size = 20),

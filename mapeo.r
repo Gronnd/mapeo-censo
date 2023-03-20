@@ -1,5 +1,5 @@
 # Lista de paquetes que se necesitan
-packages <- c("scales","viridis","janitor","rlang", "httpgd", "leaflet", "sf", "tmap", "tidyverse", "languageserver", "skimr", "viridis", "ggplot2", "mapsf", "cartography")
+packages <- c("scales","viridis","leaflet","janitor","rlang", "httpgd", "sf", "tidyverse", "languageserver", "skimr", "viridis", "ggplot2", "mapsf", "cartography")
 
 # Instalar paquetes faltantes
 packages_needed <- packages[!(packages %in% installed.packages()[,"Package"])]
@@ -10,6 +10,7 @@ if (length(packages_needed) > 0) {
 # Cargar paquetes
 lapply(packages, require, character.only = TRUE)
 
+rm(list=ls())
 
 #descargamos el shapefile de las secciones censales de españa
 temp <- tempfile()
@@ -72,16 +73,16 @@ distrito6 <- censales_shp %>%
 
 
 # Extraemos las columnas de geometría de cada objeto sf
-geom_distrito1 <- st_geometry(distrito1)
-geom_distrito2 <- st_geometry(distrito2)
-geom_distrito3 <- st_geometry(distrito3)
-geom_distrito4 <- st_geometry(distrito4)
-geom_distrito5 <- st_geometry(distrito5)
-geom_distrito6 <- st_geometry(distrito6)
-geom_os_tilos <- st_geometry(os_tilos_sh)
-geom_sigueiro <- st_geometry(sigueiro_sh)
-geom_milladoiro <- st_geometry(milladoiro_sh)
-geom_brion_bertamirans <- st_geometry(brion_bertamirans_sh)
+geom_distrito1 <- st_geometry(distrito1, crs=25830)
+geom_distrito2 <- st_geometry(distrito2, crs=25830)
+geom_distrito3 <- st_geometry(distrito3, crs=25830)
+geom_distrito4 <- st_geometry(distrito4, crs=25830)
+geom_distrito5 <- st_geometry(distrito5, crs=25830)
+geom_distrito6 <- st_geometry(distrito6, crs=25830)
+geom_os_tilos <- st_geometry(os_tilos_sh, crs=25830)
+geom_sigueiro <- st_geometry(sigueiro_sh, crs=25830)
+geom_milladoiro <- st_geometry(milladoiro_sh, crs=25830)
+geom_brion_bertamirans <- st_geometry(brion_bertamirans_sh, crs=25830)
 
 
 
@@ -89,14 +90,14 @@ geom_brion_bertamirans <- st_geometry(brion_bertamirans_sh)
 geoms <- do.call("rbind", list(geom_distrito1, geom_distrito2, geom_distrito3, geom_distrito4, geom_distrito5, geom_distrito6, geom_os_tilos, geom_sigueiro, geom_milladoiro, geom_brion_bertamirans))
 
 # Creamos un nuevo objeto sf con las columnas de geometría unidas
-distritos_union <- st_as_sf(data.frame(geometria = geoms))
+distritos_union <- st_as_sf(data.frame(geometria = geoms),crs=25830)
 
 
 # Creamos un vector con el número de distrito para cada geometría
 num_distritos <- rep(c(1:10), each = length(geoms)/10)
 
 # Creamos un nuevo objeto sf con las columnas de geometría y número de distrito unidas
-distritos_union <- st_as_sf(data.frame(geometria = geoms, distrito = num_distritos))
+distritos_union <- st_as_sf(data.frame(geometria = geoms, distrito = num_distritos), crs=25830)
 
 
 
@@ -197,7 +198,18 @@ prueba %>%
 #mapear los datos de población en el datafreme  "prueba" con  el paquete leaflet
 
 
+library(tmap)
+  tmap_mode("view")
 
+tm_shape(prueba) +
+    tm_polygons("zona", 
+    alpha = 0.5,
+    palette = hcl.colors(10, palette = "Dark 3"),
+                    
+                    # border definition: color and transparency
+                    border.col = "#990099",
+                    border.alpha = 0.1
+        )
 
-
-
+tmap_last() %>% 
+    tmap_save("Santiago_map.html")

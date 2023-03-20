@@ -1,24 +1,14 @@
-if(!require("leaflet")) install.packages("leaflet")
-if(!require("sf")) install.packages("sf")
-if(!require("tmap")) install.packages("tmap")
-if(!require("tidyverse")) install.packages("tidyverse")
-if(!require("skimr")) install.packages("skimr")
-if(!require("httpgd")) install.packages("httpgd")
-install.packages("mapsf")
+# Lista de paquetes que se necesitan
+packages <- c("rlang", "httpgd", "leaflet", "sf", "tmap", "tidyverse", "languageserver", "skimr", "viridis", "ggplot2", "mapsf", "cartography")
 
-#cargamos las librerias
-library(rlang)
-library(httpgd)
-library(leaflet)
-library(sf)
-library(tmap)
-library(tidyverse) 
-library(languageserver)
-library(skimr)
-library(viridis)
-library(ggplot2)
-library(mapsf)
-library(cartography)
+# Instalar paquetes faltantes
+packages_needed <- packages[!(packages %in% installed.packages()[,"Package"])]
+if (length(packages_needed) > 0) {
+  lapply(packages_needed, install.packages)
+}
+
+# Cargar paquetes
+lapply(packages, require, character.only = TRUE)
 
 
 #descargamos el shapefile de las secciones censales de españa

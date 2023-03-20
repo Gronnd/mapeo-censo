@@ -4,10 +4,10 @@ if(!require("tmap")) install.packages("tmap")
 if(!require("tidyverse")) install.packages("tidyverse")
 if(!require("skimr")) install.packages("skimr")
 if(!require("httpgd")) install.packages("httpgd")
+install.packages("mapsf")
 
-
-
-
+#cargamos las librerias
+library(rlang)
 library(httpgd)
 library(leaflet)
 library(sf)
@@ -16,14 +16,17 @@ library(tidyverse)
 library(languageserver)
 library(skimr)
 library(viridis)
+library(ggplot2)
+library(mapsf)
+library(cartography)
 
 
+#descargamos el shapefile de las secciones censales de españa
 temp <- tempfile()
 mydir <- getwd()
 zip_file <- list.files(mydir, pattern = ".zip$", full.names = TRUE)
 unzip(zipfile = zip_file, exdir = temp)
 shp_file <- list.files(temp, pattern = ".shp$", full.names = TRUE)
-
 censales_shp <- sf::read_sf(shp_file)
 
 
@@ -102,14 +105,16 @@ num_distritos <- rep(c(1:10), each = length(geoms)/10)
 # Creamos un nuevo objeto sf con las columnas de geometría y número de distrito unidas
 distritos_union <- st_as_sf(data.frame(geometria = geoms, distrito = num_distritos))
 
-# Verificamos que el objeto sf tiene la columna distrito
-head(distritos_union)
+
 
 # Creamos un vector con el nombre de cada distrito
 zonas <- c("distrito1", "distrito2", "distrito3", "distrito4", "distrito5", "distrito6", "os_tilos", "sigueiro", "milladoiro", "brion_bertamirans")
 
 #crear nueva columna en distritos_unión con el nombre de la zona    
 distritos_union$zona <- zonas
+
+# Verificamos que el objeto sf tiene la columna distrito
+head(distritos_union)
 
 
 #importar datos de población
@@ -121,35 +126,32 @@ str(poblacion)
 prueba <- merge(distritos_union, poblacion, by = "zona", all.x = TRUE) 
 
 
-#install.packages("viridis")
-library(viridis)
+
 
 
 #crear mapa de densidad de población
 prueba %>% 
     ggplot() +
-    geom_sf(aes(fill = poblacion)) +
-    theme_void() +
+    geom_sf(aes(fill = media_desplazamiento)) +
+    theme_void()+
     theme(legend.position = "bottom")+
-    scale_fill_viridis(option = "mako", name = "% de población")+
+    scale_fill_viridis(option = "mako", name = "% de población", limits=c(2,4))+
     labs(title = "Densidad de población por zona", subtitle = "Santiago y alrededores")+
     theme(plot.title = element_text(size = 30,hjust = 0.5, face = "bold"),
           plot.subtitle = element_text(size = 20,hjust = 0.5, face = "bold"),
           legend.text = element_text(size = 20),
           legend.title = element_text(size= 20))+
-    guides(fill = guide_colorbar(barwidth = 2, barheight = 20, title.position = "top"))+
+          guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
     #texto de la leyenda más grnde  
     theme(text = element_text(size = 24)) +
     #leyenda en la derecha
     theme(legend.position = "right")+
-#mover leyeenda un poco a la izquierda
-theme(legend.position = c(0.965, 0.25))+
+#mover leyenda
+theme(legend.position = c(0.985, 0.35))+
 #add labels to zonas
-geom_sf_label(data = prueba, aes(label = poblacion), size = 6, color = "black", vjust = 0.5, hjust = 0.5, inherit.aes = FALSE)+
-#add labels to distritos
-geom_sf_label_repel(data = prueba, aes(label = zona), size = 6, color = "black", vjust = -0.5, hjust = 0.5, inherit.aes = FALSE)
+ geom_sf_label(data = prueba, aes(label = media_desplazamiento), 
+              size = 6, color = "black", inherit.aes = FALSE)
+  #add labels to distritos
+  geom_sf_label(data = prueba, aes(label = zona),
+  size = 6, color = "black", vjust = -0.3, inherit.aes = FALSE)
 
-
-
-devtools::install_github("tidyverse/ggplot2")
-require(ggplot2)

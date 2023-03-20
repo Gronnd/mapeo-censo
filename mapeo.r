@@ -15,20 +15,16 @@ library(tmap)
 library(tidyverse) 
 library(languageserver)
 library(skimr)
+library(viridis)
+
 
 temp <- tempfile()
-
-
 mydir <- getwd()
 zip_file <- list.files(mydir, pattern = ".zip$", full.names = TRUE)
 unzip(zipfile = zip_file, exdir = temp)
 shp_file <- list.files(temp, pattern = ".shp$", full.names = TRUE)
 
 censales_shp <- sf::read_sf(shp_file)
-
-
-santiago_shp <- censales_shp  %>% 
-    filter(NMUN == "Santiago de Compostela" | NMUN == "Ames" | NMUN == "Teo" | NMUN == "Oroso")
 
 
 
@@ -147,5 +143,8 @@ prueba %>%
     #texto de la leyenda más grnde  
     theme(text = element_text(size = 24)) +
     #leyenda en la derecha
-    theme(legend.position = "right")
-
+    theme(legend.position = "right")+
+#mover leyeenda un poco a la izquierda
+theme(legend.position = c(0.965, 0.25))+
+#add labels to zonas
+geom_sf_label(data = prueba, aes(label = zona), size = 6, color = "black", vjust = 0.5, hjust = 0.5, inherit.aes = FALSE)

@@ -203,6 +203,7 @@ prueba %>%
 
 
 
+#mapa de Santiago con tmap con limites de los distritos
 
   tmap_mode("view")
 
@@ -215,6 +216,10 @@ tm_shape(prueba) +
                     border.col = "#990099",
                     border.alpha = 0.1
         )
-
+#guardar mapa en html
 tmap_last() %>% 
     tmap_save("Santiago_map.html")
+
+
+
+

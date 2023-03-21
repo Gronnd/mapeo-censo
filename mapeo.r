@@ -1,5 +1,5 @@
 # Lista de paquetes que se necesitan
-packages <- c("scales","viridis","leaflet","janitor","rlang", "httpgd", "sf", "tidyverse", "languageserver", "skimr", "viridis", "ggplot2", "mapsf", "cartography")
+packages <- c("scales","viridis","leaflet","janitor","rlang", "httpgd","tmap", "sf", "tidyverse", "languageserver", "skimr", "viridis", "ggplot2", "mapsf", "cartography")
 
 # Instalar paquetes faltantes
 packages_needed <- packages[!(packages %in% installed.packages()[,"Package"])]
@@ -102,7 +102,7 @@ distritos_union <- st_as_sf(data.frame(geometria = geoms, distrito = num_distrit
 
 
 # Creamos un vector con el nombre de cada distrito
-zonas <- c("distrito1", "distrito2", "distrito3", "distrito4", "distrito5", "distrito6", "os_tilos", "sigueiro", "milladoiro", "brion_bertamirans")
+zonas <- c("Distrito 1", "Distrito 2", "Distrito 3", "Distrito 4", "Distrito 5", "Distrito 6", "Os tilos", "Sigüeiro", "Milladoiro", "Brión e Bertamiráns")
 
 #crear nueva columna en distritos_unión con el nombre de la zona    
 distritos_union$zona <- zonas
@@ -124,6 +124,7 @@ str(poblacion)
 
 #unir distritos_union con poblacion
 prueba <- merge(distritos_union, poblacion, by = "zona", all.x = TRUE) 
+
 
 #reordenar el dataframe prueba en base a la variable distrito
 prueba  %>% 
@@ -147,9 +148,7 @@ prueba %>%
           legend.text = element_text(size = 20),
           legend.title = element_text(size= 20))+
           guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
-    #texto de la leyenda más grnde  
     theme(text = element_text(size = 24)) +
-    #leyenda en la derecha
     theme(legend.position = "right")+
 #añadir etiquetas con decimales
           #+geom_sf_label(aes(label = paste0(zona,": ", round(x_de_vehiculo_privado_como_medio_principal, 2))),
@@ -168,14 +167,12 @@ prueba %>%
           legend.text = element_text(size = 20),
           legend.title = element_text(size= 20))+
           guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
-    #texto de la leyenda más grnde  
     theme(text = element_text(size = 24)) +
-    #leyenda en la derecha
     theme(legend.position = "right")+
 #añadir etiquetas con decimales
           #+geom_sf_label(aes(label = paste0(zona,": ", round(x_de_vehiculo_privado_como_medio_principal, 2))),
 #añadir etiquetas con porcentaje
-          geom_sf_label(aes(label = paste0(zona,": ", round(x_de_vehiculo_privado_como_medio_principal * 100, 2), "%")),size = 7,  color = "black", inherit.aes = FALSE)
+          geom_sf_label(aes(label = paste0(zona,": ", round(x_de_vehiculo_privado_como_medio_principal * 100, 2), "%")),size = 6,  color = "black", inherit.aes = FALSE)
 
 
 
@@ -190,15 +187,12 @@ prueba %>%
           legend.text = element_text(size = 20),
           legend.title = element_text(size= 20))+
           guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
-    #texto de la leyenda más grnde  
     theme(text = element_text(size = 24)) +
-    #leyenda en la derecha
-    theme(legend.position = "right")
+    theme(legend.position = "right")+
 #añadir etiquetas con decimales
           #geom_sf_label(aes(label = paste0(zona,": ", round(x_de_transporte_publico_como_medio_principal, 2))))
 #añadir etiquetas con porcentaje
-          #geom_sf_label(aes(label = paste0(zona,": ", round(x_de_transporte_publico_como_medio_principal * 100, 2), "%")),size = 7,  color = "black", inherit.aes = FALSE)
-
+          geom_sf_label(aes(label = paste0(zona,": ", round(x_de_transporte_publico_como_medio_principal * 100, 2), "%")),size = 6,  color = "black", inherit.aes = FALSE)
 
 
 
@@ -208,18 +202,16 @@ prueba %>%
   tmap_mode("view")
 
 tm_shape(prueba) +
-    tm_polygons("zona", 
+    tm_polygons("media_de_desplazamientos",
+    legend.reverse = TRUE,
+    title="Media de desplazamientos",
     alpha = 0.5,
-    palette = hcl.colors(10, palette = "Dark 3"),
-                    
+    palette = hcl.colors(10, palette = "Mako"),
                     # border definition: color and transparency
                     border.col = "#990099",
                     border.alpha = 0.1
         )
+
 #guardar mapa en html
 tmap_last() %>% 
     tmap_save("Santiago_map.html")
-
-
-
-

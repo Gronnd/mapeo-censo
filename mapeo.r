@@ -125,8 +125,14 @@ str(poblacion)
 #unir distritos_union con poblacion
 prueba <- merge(distritos_union, poblacion, by = "zona", all.x = TRUE) 
 
+#reordenar el dataframe prueba en base a la variable distrito
+prueba  %>% 
+    arrange(distrito) -> prueba
 
+#borrar variable distrito
+prueba <- prueba[,-2]
 
+str(prueba)
 
 
 #crear mapa de densidad de población
@@ -144,12 +150,11 @@ prueba %>%
     #texto de la leyenda más grnde  
     theme(text = element_text(size = 24)) +
     #leyenda en la derecha
-    theme(legend.position = "right")
-#mover leyenda
-#theme(legend.position = c(0.985, 0.35))+
+    theme(legend.position = "right")+
+#añadir etiquetas con decimales
           #+geom_sf_label(aes(label = paste0(zona,": ", round(x_de_vehiculo_privado_como_medio_principal, 2))),
 #añadir etiquetas con porcentaje
-          #+geom_sf_label(aes(label = paste0(zona,": ", round(x_de_movilidad_activa_como_medio_principal * 100, 2), "%")),size = 6,  color = "black", inherit.aes = FALSE)
+          geom_sf_label(aes(label = paste0(zona,": ", round(x_de_movilidad_activa_como_medio_principal * 100, 2), "%")),size = 6,  color = "black", inherit.aes = FALSE)
 
 
 prueba %>% 
@@ -166,12 +171,11 @@ prueba %>%
     #texto de la leyenda más grnde  
     theme(text = element_text(size = 24)) +
     #leyenda en la derecha
-    theme(legend.position = "right")
-#mover leyenda
-#theme(legend.position = c(0.985, 0.35))+
+    theme(legend.position = "right")+
+#añadir etiquetas con decimales
           #+geom_sf_label(aes(label = paste0(zona,": ", round(x_de_vehiculo_privado_como_medio_principal, 2))),
 #añadir etiquetas con porcentaje
-          #+geom_sf_label(aes(label = paste0(zona,": ", round(x_de_vehiculo_privado_como_medio_principal * 100, 2), "%")),size = 7,  color = "black", inherit.aes = FALSE)
+          geom_sf_label(aes(label = paste0(zona,": ", round(x_de_vehiculo_privado_como_medio_principal * 100, 2), "%")),size = 7,  color = "black", inherit.aes = FALSE)
 
 
 
@@ -190,15 +194,16 @@ prueba %>%
     theme(text = element_text(size = 24)) +
     #leyenda en la derecha
     theme(legend.position = "right")
-#mover leyenda
-#theme(legend.position = c(0.985, 0.35))+
-          #+geom_sf_label(aes(label = paste0(zona,": ", round(x_de_vehiculo_privado_como_medio_principal, 2))),
+#añadir etiquetas con decimales
+          #geom_sf_label(aes(label = paste0(zona,": ", round(x_de_transporte_publico_como_medio_principal, 2))))
 #añadir etiquetas con porcentaje
-          #+geom_sf_label(aes(label = paste0(zona,": ", round(x_de_transporte_publico_como_medio_principal * 100, 2), "%")),size = 7,  color = "black", inherit.aes = FALSE)
-#mapear los datos de población en el datafreme  "prueba" con  el paquete leaflet
+          #geom_sf_label(aes(label = paste0(zona,": ", round(x_de_transporte_publico_como_medio_principal * 100, 2), "%")),size = 7,  color = "black", inherit.aes = FALSE)
 
 
-library(tmap)
+
+
+
+
   tmap_mode("view")
 
 tm_shape(prueba) +

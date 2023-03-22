@@ -143,17 +143,15 @@ prueba %>%
     theme_void()+
     theme(legend.position = "bottom")+
     scale_fill_viridis(option = "mako", name = "Movilidad activa", labels=percent)+
-    theme(plot.title = element_text(size = 30,hjust = 0.5, face = "bold"),
-          plot.subtitle = element_text(size = 20,hjust = 0.5, face = "bold"),
-          legend.text = element_text(size = 20),
+    theme(legend.text = element_text(size = 20),
           legend.title = element_text(size= 20))+
           guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
-    theme(text = element_text(size = 24)) +
-    theme(legend.position = "right")+
+    theme(text = element_text(size = 24))+
+    theme(legend.position = "right")
 #añadir etiquetas con decimales
           #+geom_sf_label(aes(label = paste0(zona,": ", round(x_de_vehiculo_privado_como_medio_principal, 2))),
 #añadir etiquetas con porcentaje
-          geom_sf_label(aes(label = paste0(zona,": ", round(x_de_movilidad_activa_como_medio_principal * 100, 2), "%")),size = 6,  color = "black", inherit.aes = FALSE)
+          #geom_sf_label(aes(label = paste0(zona,": ", round(x_de_movilidad_activa_como_medio_principal * 100, 2), "%")),size = 6,  color = "black", inherit.aes = FALSE)
 
 
 prueba %>% 
@@ -162,9 +160,7 @@ prueba %>%
     theme_void()+
     theme(legend.position = "bottom")+
     scale_fill_viridis(option = "mako", name = "Vehiculo privado",  labels=percent)+
-    theme(plot.title = element_text(size = 30,hjust = 0.5, face = "bold"),
-          plot.subtitle = element_text(size = 20,hjust = 0.5, face = "bold"),
-          legend.text = element_text(size = 20),
+    theme(legend.text = element_text(size = 20),
           legend.title = element_text(size= 20))+
           guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
     theme(text = element_text(size = 24)) +
@@ -182,9 +178,7 @@ prueba %>%
     theme_void()+
     theme(legend.position = "bottom")+
     scale_fill_viridis(option = "mako", name = "Transporte público",  labels=percent)+
-    theme(plot.title = element_text(size = 30,hjust = 0.5, face = "bold"),
-          plot.subtitle = element_text(size = 20,hjust = 0.5, face = "bold"),
-          legend.text = element_text(size = 20),
+    theme(legend.text = element_text(size = 20),
           legend.title = element_text(size= 20))+
           guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
     theme(text = element_text(size = 24)) +
@@ -194,6 +188,25 @@ prueba %>%
 #añadir etiquetas con porcentaje
           geom_sf_label(aes(label = paste0(zona,": ", round(x_de_transporte_publico_como_medio_principal * 100, 2), "%")),size = 6,  color = "black", inherit.aes = FALSE)
 
+options("OutDec" = ",")
+
+
+#crear mapa de densidad de población
+prueba %>% 
+    ggplot() +
+    geom_sf(aes(fill = media_de_desplazamientos)) +
+    theme_void()+
+    theme(legend.position = "bottom")+
+    scale_fill_viridis(option = "mako", name = "Media de desplazamientos", labels=percent, limits = c(2.2,3.4))+
+    theme(legend.text = element_text(size = 20),
+          legend.title = element_text(size= 20))+
+          guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
+    theme(text = element_text(size = 24))+
+    theme(legend.position = "none")+
+#añadir etiquetas con decimales
+          geom_sf_label(aes(label = paste0(zona,": ", format((round(media_de_desplazamientos, 2)), decimal.mark = getOption("OutDec")))), size = 6,  color = "#000000", inherit.aes = FALSE)
+#añadir etiquetas con porcentaje
+          #geom_sf_label(aes(label = paste0(zona,": ", round(x_de_movilidad_activa_como_medio_principal * 100, 2), "%")),size = 6,  color = "black", inherit.aes = FALSE)
 
 
 

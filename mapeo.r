@@ -112,6 +112,11 @@ head(distritos_union)
 
 
 
+#guardar  distritos_union en un shapefile
+st_write(distritos_union, "santiago.shp", driver = "ESRI Shapefile", overwrite_layer = TRUE)
+
+
+
 #importar datos de población
 poblacion <- read.csv("pop.csv", header = TRUE, sep = ";", dec = ",")
 
@@ -122,22 +127,27 @@ poblacion <- poblacion %>% clean_names()
 str(poblacion)
 
 
+
+#leer santigo.shp
+santiago <- st_read("santiago.shp")
+
 #unir distritos_union con poblacion
-prueba <- merge(distritos_union, poblacion, by = "zona", all.x = TRUE) 
+santiago_datos <- merge(santiago, poblacion, by = "zona", all.x = TRUE) 
+
 
 
 #reordenar el dataframe prueba en base a la variable distrito
-prueba  %>% 
-    arrange(distrito) -> prueba
+santiago_datos <- santiago_datos   %>% 
+    arrange(distrito)
 
 #borrar variable distrito
-prueba <- prueba[,-2]
+santiago_datos <- santiago_datos[,-2]
 
-str(prueba)
+str(santiago_datos)
 
 
 #crear mapa de densidad de población
-prueba %>% 
+santiago_datos %>% 
     ggplot() +
     geom_sf(aes(fill = x_de_movilidad_activa_como_medio_principal), color = "black", linewidth = .6) +
     theme_void()+
@@ -145,16 +155,11 @@ prueba %>%
     scale_fill_continuous(name = "Movilidad activa",  labels=percent)+
     theme(legend.text = element_text(size = 20),
           legend.title = element_text(size= 20))+
-          guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
+          guides(fill = guide_colorbar(barwidth = 2, barheight = 10, title.position = "top"))+
     theme(text = element_text(size = 24))+
-    theme(legend.position = "right")
-#añadir etiquetas con decimales
-          #+geom_sf_label(aes(label = paste0(zona,": ", round(x_de_vehiculo_privado_como_medio_principal, 2))),
-#añadir etiquetas con porcentaje
-          #geom_sf_label(aes(label = paste0(zona,": ", round(x_de_movilidad_activa_como_medio_principal * 100, 2), "%")),size = 6,  color = "black", inherit.aes = FALSE)
+     theme(legend.position = c(.89, 0.18))
 
-
-prueba %>% 
+santiago_datos %>% 
     ggplot() +
     geom_sf(aes(fill = x_de_vehiculo_privado_como_medio_principal), color = "black", linewidth = .6) +
     theme_void()+
@@ -162,17 +167,12 @@ prueba %>%
     scale_fill_continuous(name = "Vehiculo privado",  labels=percent)+
     theme(legend.text = element_text(size = 20),
           legend.title = element_text(size= 20))+
-          guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
+          guides(fill = guide_colorbar(barwidth = 2, barheight = 10, title.position = "top"))+
     theme(text = element_text(size = 24))+
-    theme(legend.position = "right")
-#añadir etiquetas con decimales
-          #+geom_sf_label(aes(label = paste0(zona,": ", round(x_de_vehiculo_privado_como_medio_principal, 2))),
-#añadir etiquetas con porcentaje
-          #geom_sf_label(aes(label = paste0(zona,": ", round(x_de_vehiculo_privado_como_medio_principal * 100, 2), "%")),size = 6,  color = "black", inherit.aes = FALSE)
+     theme(legend.position = c(.89, 0.18))
 
 
-
-prueba %>% 
+santiago_datos %>% 
     ggplot() +
     geom_sf(aes(fill = x_de_transporte_publico_como_medio_principal), color = "black", linewidth = .6) +
     theme_void()+
@@ -180,24 +180,21 @@ prueba %>%
     scale_fill_continuous(name = "Transporte público",  labels=percent)+
     theme(legend.text = element_text(size = 20),
           legend.title = element_text(size= 20))+
-          guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
+          guides(fill = guide_colorbar(barwidth = 2, barheight = 10, title.position = "top"))+
     theme(text = element_text(size = 24)) +
-    theme(legend.position = "right")
-#añadir etiquetas con decimales
-          #geom_sf_label(aes(label = paste0(zona,": ", round(x_de_transporte_publico_como_medio_principal, 2))))
-#añadir etiquetas con porcentaje
-          #geom_sf_label(aes(label = paste0(zona,": ", round(x_de_transporte_publico_como_medio_principal * 100, 2), "%")),size = 6,  color = "black", inherit.aes = FALSE)
+    #mover legenda un poco a la izquierda
+    theme(legend.position = c(.89, 0.18))
 
 options("OutDec" = ",")
 
 
 #crear mapa de densidad de población
-prueba %>% 
+santiago_datos %>% 
     ggplot() +
     geom_sf(aes(fill = media_de_desplazamientos), color = "black", linewidth = .6) +
     theme_void()+
     theme(legend.position = "bottom")+
-    scale_fill_viridis(option = "mako", name = "Media de desplazamientos", labels=percent, limits = c(2.2,3.4))+
+    scale_fill_continuous(name = "Media de desplazamientos", labels=percent, limits = c(2.2,3.4))+
     theme(legend.text = element_text(size = 20),
           legend.title = element_text(size= 20))+
           guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+

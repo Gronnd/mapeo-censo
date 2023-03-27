@@ -67,8 +67,7 @@ santiago_datos %>%
           guides(fill = guide_colorbar(barwidth = 2, barheight = 10, title.position = "top"))+
     theme(text = element_text(size = 24)) +
      theme(legend.position = c(.89, 0.18))
-
-    
+     
 options("OutDec" = ",")
 
 

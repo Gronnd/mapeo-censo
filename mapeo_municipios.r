@@ -33,23 +33,31 @@ municipios <- censales_shp %>%
 
 
 #con st_union y summarize
-municipios_2 <- municipios %>% 
+municipios <- municipios %>% 
   group_by(CUMUN) %>% 
   summarize(geometry = st_union(geometry))
 
 #cambiar el nombre de la columna CUMUN por municipio
-colnames(municipios_2)[1] <- "municipio"
+colnames(municipios)[1] <- "municipio"
 
 #en el dataframe municipios_2, en la columna "municipio, " cambair el valor 15002 por "Ames", el valor 15013 por "Brión", el valor 15060 por "Oroso",el valor  15078 por "Santiago de Compostela" y el valor 15082 por "Teo"
+municipios$municipio <- ifelse(municipios$municipio == 15002, "Ames", 
+                                ifelse(municipios$municipio == 15013, "Brión",
+                                ifelse(municipios$municipio == 15060, "Oroso",
+                                ifelse(municipios$municipio == 15078, "Santiago de Compostela",
+                                ifelse(municipios$municipio == 15082, "Teo", 
+                                       municipios$municipio)))))
 
-municipios_2$municipio <- ifelse(municipios_2$municipio == 15002, "Ames", 
-                                ifelse(municipios_2$municipio == 15013, "Brión",
-                                ifelse(municipios_2$municipio == 15060, "Oroso",
-                                ifelse(municipios_2$municipio == 15078, "Santiago de Compostela",
-                                ifelse(municipios_2$municipio == 15082, "Teo", 
-                                       municipios_2$municipio)))))
 
 
+
+
+municipios %>% 
+  ggplot()  +
+  geom_sf(color="#000000", fill="#3B9ADF", alpha=0.6) +
+  theme_void()+
+  theme(legend.position = "none")+
+  geom_sf_label(aes(label = municipio), color = "#000000", size=6)
 
 tmap_mode("view")
 

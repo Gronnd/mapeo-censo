@@ -25,11 +25,9 @@ censales_shp <- sf::read_sf(shp_file)
 rm(mydir, temp, zip_file, shp_file)
 
 
-
 #en un dataframe llamado municipios guarda los casos que tengan el valor en la variable NMUN igual a "Santiago de Compostela" o "Brión" o "Ames" o "Oroso" o "Teo"
 municipios <- censales_shp %>%
     filter(NMUN=="Santiago de Compostela" | NMUN=="Brión" | NMUN=="Ames" | NMUN=="Oroso" | NMUN=="Teo")
-
 
 
 #con st_union y summarize
@@ -40,6 +38,22 @@ municipios <- municipios %>%
 #cambiar el nombre de la columna CUMUN por municipio
 colnames(municipios)[1] <- "municipio"
 
+
+#importar datos de población
+munc <- read.csv("mun.csv", header = TRUE, sep = ";", dec = ",")
+
+
+#limpiar nombres de columnas en poblacion con janitor
+munc <- munc %>% clean_names()
+
+str(munc)
+
+
+#unir distritos_union con poblacion
+municipio_datos <- merge(municipios, munc, by = "municipio", all.x = TRUE) 
+
+
+
 #en el dataframe municipios_2, en la columna "municipio, " cambair el valor 15002 por "Ames", el valor 15013 por "Brión", el valor 15060 por "Oroso",el valor  15078 por "Santiago de Compostela" y el valor 15082 por "Teo"
 municipios$municipio <- ifelse(municipios$municipio == 15002, "Ames", 
                                 ifelse(municipios$municipio == 15013, "Brión",
@@ -47,6 +61,7 @@ municipios$municipio <- ifelse(municipios$municipio == 15002, "Ames",
                                 ifelse(municipios$municipio == 15078, "Santiago de Compostela",
                                 ifelse(municipios$municipio == 15082, "Teo", 
                                        municipios$municipio)))))
+
 
 
 

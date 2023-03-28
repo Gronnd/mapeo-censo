@@ -1,3 +1,16 @@
+# Lista de paquetes que se necesitan
+packages <- c("lubridate", "scales","viridis","leaflet","janitor","rlang", "httpgd","tmap", "sf", "tidyverse", "languageserver", "skimr", "viridis", "ggplot2", "mapsf", "cartography")
+
+# Instalar paquetes faltantes
+packages_needed <- packages[!(packages %in% installed.packages()[,"Package"])]
+if (length(packages_needed) > 0) {
+  lapply(packages_needed, install.packages)
+}
+
+# Cargar paquetes
+lapply(packages, require, character.only = TRUE)
+
+rm(list=ls())
 
 
 #importar datos de población
@@ -29,7 +42,33 @@ santiago_datos <- santiago_datos[,-2]
 str(santiago_datos)
 
 
-#crear mapa de densidad de población
+
+options("OutDec" = ":")
+
+
+
+#mapa con la duración media de los desplazamientos
+santiago_datos %>% 
+    ggplot() +
+    geom_sf(aes(fill = duracion_media_de_desplazamiento), color = "black", linewidth = .6) +
+    theme_void()+
+    theme(legend.position = "bottom")+
+    scale_fill_continuous(name = "Media de desplazamientos", labels=percent, trans = 'reverse',)+
+    theme(legend.text = element_text(size = 20),
+          legend.title = element_text(size= 20))+
+          guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
+    theme(text = element_text(size = 24))+
+    theme(legend.position = "none")+
+#añadir etiquetas con decimales
+          geom_sf_text(aes(label = paste0(format(duracion_media_de_desplazamiento,decimal.mark = getOption("OutDec")))), 
+          size = 6,  
+          color = "#ffffff", 
+          hjust =0.35)
+           
+
+
+
+#crear mapas de movilidad
 santiago_datos %>%
     ggplot() +
     geom_sf(aes(fill = x_de_movilidad_activa_como_medio_principal), color = "black", linewidth = .6) +
@@ -68,7 +107,6 @@ santiago_datos %>%
     theme(text = element_text(size = 24)) +
      theme(legend.position = c(.89, 0.18))
      
-options("OutDec" = ",")
 
 
 #crear mapa de media de desplazamientos

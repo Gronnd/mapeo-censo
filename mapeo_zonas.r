@@ -60,9 +60,9 @@ santiago_datos %>%
     theme(text = element_text(size = 24))+
     theme(legend.position = "none")+
 #añadir etiquetas con decimales
-          geom_sf_text(aes(label = paste0(format(duracion_media_de_desplazamiento,decimal.mark = getOption("OutDec")))), 
+          geom_sf_label(aes(label = paste0(format(duracion_media_de_desplazamiento,decimal.mark = getOption("OutDec")))), 
           size = 6,  
-          color = "#ffffff", 
+          color = "#000000", 
           hjust =0.35)
            
 

@@ -131,8 +131,9 @@ str(poblacion)
 #leer santigo.shp
 santiago <- st_read("santiago.shp")
 
+
 #unir distritos_union con poblacion
-santiago_datos <- merge(santiago, poblacion, by = "zona", all.x = TRUE) 
+distritos_datos <- merge(distritos_union, poblacion, by = "zona", all.x = TRUE, sep = ";", dec = ",") 
 
 
 

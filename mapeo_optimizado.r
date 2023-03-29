@@ -19,6 +19,7 @@ unzip(zipfile = zip_file, exdir = tempdir())
 shp_file <- list.files(tempdir(), pattern = ".shp$", full.names = TRUE)
 censales_shp <- sf::read_sf(shp_file)
 
+rm(shp_file, zip_file)
 
 # Función para filtrar y unir
 filter_and_union <- function(shp, CUSEC_values) {
@@ -85,3 +86,23 @@ santiago_datos <- santiago_datos[,-2]
 
 str(santiago_datos)
 
+#set , as decimal separator
+options(OutDec = ",")
+
+
+#crear mapa de media de desplazamientos
+santiago_datos %>% 
+    ggplot() +
+    geom_sf(aes(fill = media_de_desplazamientos), color = "black", linewidth = .6) +
+    theme_void()+
+    theme(legend.position = "bottom")+
+    scale_fill_continuous(name = "Media de desplazamientos", trans = 'reverse', limits=c(3.4,2.2)  )+
+    theme(legend.text = element_text(size = 20),
+          legend.title = element_text(size= 20))+
+          guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
+    theme(text = element_text(size = 24))+
+    theme(legend.position = "none")+
+#añadir etiquetas con decimales
+          geom_sf_label(aes(label = paste0(zona,": ", format((round(media_de_desplazamientos, 2)), decimal.mark = getOption("OutDec")))), size = 6,  color = "#000000", inherit.aes = FALSE)
+ #añadir etiquetas con porcentaje
+          #geom_sf_label(aes(label = paste0(zona,": ", round(x_de_movilidad_activa_como_medio_principal * 100, 2), "%")),size = 6,  color = "black", inherit.aes = FALSE)

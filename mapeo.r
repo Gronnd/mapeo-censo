@@ -1,5 +1,5 @@
 # Lista de paquetes que se necesitan
-packages <- c("scales","viridis","leaflet","janitor","rlang", "httpgd","tmap", "sf", "tidyverse", "languageserver", "skimr", "viridis", "ggplot2", "mapsf", "cartography")
+packages <- c("scales","viridis","leaflet","janitor","rlang", "httpgd", "sf", "tidyverse", "languageserver", "skimr", "ggplot2", "mapsf", "cartography")
 
 # Instalar paquetes faltantes
 packages_needed <- packages[!(packages %in% installed.packages()[,"Package"])]
@@ -20,7 +20,7 @@ unzip(zipfile = zip_file, exdir = temp)
 shp_file <- list.files(temp, pattern = ".shp$", full.names = TRUE)
 censales_shp <- sf::read_sf(shp_file)
 
-#convertimos a WGS84
+#convertimos a WGS84, opcional
 #censales_shp <- st_transform(censales_shp, '+proj=longlat +datum=WGS84')
 
 

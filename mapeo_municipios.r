@@ -1,4 +1,5 @@
-packages <- c("scales","viridis","leaflet","janitor","rlang", "httpgd","tmap", "sf", "tidyverse", "languageserver", "skimr", "viridis", "ggplot2", "mapsf", "cartography")
+# Lista de paquetes que se necesitan
+packages <- c("janitor", "rlang", "sf", "tidyverse", "ggplot2")
 
 # Instalar paquetes faltantes
 packages_needed <- packages[!(packages %in% installed.packages()[,"Package"])]
@@ -6,12 +7,10 @@ if (length(packages_needed) > 0) {
   lapply(packages_needed, install.packages)
 }
 
-
 # Cargar paquetes
 lapply(packages, require, character.only = TRUE)
 
 rm(list=ls())
-
 
 #descargamos el shapefile de las secciones censales de españa
 temp <- tempfile()
@@ -74,7 +73,3 @@ municipios %>%
   theme(legend.position = "none")+
   geom_sf_label(aes(label = municipio), color = "#000000", size=6)
 
-tmap_mode("view")
-
-tm_shape(municipios_2)    +
-    tm_polygons("municipio", title = "Municipios")

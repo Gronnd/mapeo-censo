@@ -87,7 +87,7 @@ santiago_datos <- santiago_datos[,-2]
 str(santiago_datos)
 
 #set , as decimal separator
-options(OutDec = ",")
+options(OutDec = ":")
 
 
 #crear mapa de media de desplazamientos
@@ -136,3 +136,21 @@ santiago_datos %>%
     theme(text = element_text(size = 24))+
     theme(legend.position = "none")+
     geom_sf_label(aes(label = ratio_de_pob_despl),size = 6,  color = "#000000", inherit.aes = FALSE)
+
+
+santiago_datos %>% 
+    ggplot() +
+    geom_sf(aes(fill = duracion_media_de_desplazamiento), color = "black", linewidth = .6) +
+    theme_void()+
+    theme(legend.position = "bottom")+
+    scale_fill_continuous(name = "Media de desplazamientos", trans = 'reverse',)+
+    theme(legend.text = element_text(size = 20),
+          legend.title = element_text(size= 20))+
+          guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
+    theme(text = element_text(size = 24))+
+    theme(legend.position = "none")+
+#añadir etiquetas con decimales
+          geom_sf_label(aes(label = paste0(format(duracion_media_de_desplazamiento,decimal.mark = getOption("OutDec")))), 
+          size = 7,  
+          color = "#000000", 
+          hjust =0.35)

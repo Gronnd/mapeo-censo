@@ -96,7 +96,7 @@ santiago_datos %>%
     geom_sf(aes(fill = media_de_desplazamientos), color = "black", linewidth = .6) +
     theme_void()+
     theme(legend.position = "bottom")+
-    scale_fill_continuous(name = "Media de desplazamientos", trans = 'reverse')+
+    scale_fill_continuous(low = "#f2769534", high = "#cc004e")+  
     theme(legend.text = element_text(size = 20),
           legend.title = element_text(size= 20))+
           guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
@@ -106,6 +106,7 @@ santiago_datos %>%
           geom_sf_label(aes(label = paste0(zona,": ", format((round(media_de_desplazamientos, 2)), decimal.mark = getOption("OutDec")))), size = 6,  color = "#000000", inherit.aes = FALSE)
  #añadir etiquetas con porcentaje
           #geom_sf_label(aes(label = paste0(zona,": ", round(x_de_movilidad_activa_como_medio_principal * 100, 2), "%")),size = 6,  color = "black", inherit.aes = FALSE)
+
 
 
 #crear mapa del % de desplazamientos sobre el total
@@ -154,3 +155,4 @@ santiago_datos %>%
           size = 7,  
           color = "#000000", 
           hjust =0.35)
+

@@ -90,23 +90,6 @@ str(santiago_datos)
 options(OutDec = ":")
 
 
-#crear mapa de media de desplazamientos
-santiago_datos %>% 
-    ggplot() +
-    geom_sf(aes(fill = media_de_desplazamientos), color = "black", linewidth = .6) +
-    theme_void()+
-    theme(legend.position = "bottom")+
-    scale_fill_continuous(low = "#f2769534", high = "#cc004e")+  
-    theme(legend.text = element_text(size = 20),
-          legend.title = element_text(size= 20))+
-          guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
-    theme(text = element_text(size = 24))+
-    theme(legend.position = "none")+
-#añadir etiquetas con decimales
-          geom_sf_label(aes(label = paste0(zona,": ", format((round(media_de_desplazamientos, 2)), decimal.mark = getOption("OutDec")))), size = 6,  color = "#000000", inherit.aes = FALSE)
- #añadir etiquetas con porcentaje
-          #geom_sf_label(aes(label = paste0(zona,": ", round(x_de_movilidad_activa_como_medio_principal * 100, 2), "%")),size = 6,  color = "black", inherit.aes = FALSE)
-
 
 
 #crear mapa del % de desplazamientos sobre el total
@@ -156,3 +139,35 @@ santiago_datos %>%
           color = "#000000", 
           hjust =0.35)
 
+
+
+#crear mapa de media de desplazamientos
+santiago_datos %>% 
+    ggplot() +
+    geom_sf(aes(fill = media_de_desplazamientos), color = "black", linewidth = .6) +
+    theme_void()+
+    theme(legend.position = "bottom")+
+    scale_fill_continuous(low = "#f2769534", high = "#cc004e")+  
+    theme(legend.text = element_text(size = 20),
+          legend.title = element_text(size= 20))+
+          guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top"))+
+    theme(text = element_text(size = 24))+
+    theme(legend.position = "none")+
+#añadir etiquetas con decimales
+          geom_sf_label(aes(label = paste0(zona,": ", format((round(media_de_desplazamientos, 2)), decimal.mark = getOption("OutDec")))), size = 6,  color = "#000000", inherit.aes = FALSE)
+ #añadir etiquetas con porcentaje
+          #geom_sf_label(aes(label = paste0(zona,": ", round(x_de_movilidad_activa_como_medio_principal * 100, 2), "%")),size = 6,  color = "black", inherit.aes = FALSE)
+
+
+crear mapa de densidad de población
+santiago_datos %>%
+    ggplot() +
+    geom_sf(aes(fill = x_de_movilidad_activa_como_medio_principal), color = "black", linewidth = .6) +
+    theme_void()+
+    theme(legend.position = "bottom")+
+     scale_fill_continuous(name = "Movilidad activa", low = "#f2769534", high = "#cc004e")+
+    theme(legend.text = element_text(size = 20),
+          legend.title = element_text(size= 20))+
+          guides(fill = guide_colorbar(barwidth = 2, barheight = 10, title.position = "top"))+
+    theme(text = element_text(size = 24))+
+     theme(legend.position = c(.89, 0.18))

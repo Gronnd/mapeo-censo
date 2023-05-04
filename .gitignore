@@ -12,10 +12,10 @@
 #imágenes
 *.png
 
-#csv
+# cualquier csv
 *.csv
 
-#html
+# cualquier html
 *.html
 
 # Example code in package build process

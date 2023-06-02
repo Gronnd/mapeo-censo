@@ -57,3 +57,5 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 probas.r
+*.dbf
+*.shp

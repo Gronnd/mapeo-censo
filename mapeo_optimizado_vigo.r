@@ -28,38 +28,24 @@ filter_and_union <- function(shp, CUSEC_values) {
     st_union()
 }
 
-zonas <- list(
-  "Distrito 1" = censales_shp %>% filter(grepl("^Vigo", NMUN) & grepl("^01$", CDIS)) %>% pull(CUSEC),
-  "Distrito 2" = censales_shp %>% filter(grepl("^Vigo", NMUN) & grepl("^02$", CDIS)) %>% pull(CUSEC),
-  "Distrito 3" = censales_shp %>% filter(grepl("^Vigo", NMUN) & grepl("^03$", CDIS)) %>% pull(CUSEC),
-  "Distrito 4" = censales_shp %>% filter(grepl("^Vigo", NMUN) & grepl("^04$", CDIS)) %>% pull(CUSEC),
-  "Distrito 5" = censales_shp %>% filter(grepl("^Vigo", NMUN) & grepl("^05$", CDIS)) %>% pull(CUSEC),
-  "Distrito 6" = censales_shp %>% filter(grepl("^Vigo", NMUN) & grepl("^06$", CDIS)) %>% pull(CUSEC),
-  "Distrito 7" = censales_shp %>% filter(grepl("^Vigo", NMUN) & grepl("^04$", CDIS)) %>% pull(CUSEC),
-  "Distrito 8" = censales_shp %>% filter(grepl("^Vigo", NMUN) & grepl("^05$", CDIS)) %>% pull(CUSEC),
-  "Distrito 9" = censales_shp %>% filter(grepl("^Vigo", NMUN) & grepl("^06$", CDIS)) %>% pull(CUSEC)
-)
+
+vigo <- censales_shp %>%
+  filter(NMUN=="Vigo" )
 
 
-# Bucle para iterar sobre zonas y códigos CUSEC
-geoms_df <- vector("list", length(zonas))
-names(geoms_df) <- names(zonas)
-
-for (zona in names(zonas)) {
-  geom_temp <- filter_and_union(censales_shp, zonas[[zona]])
-  geoms_df[[zona]] <- data.frame(zona = zona, stringsAsFactors = FALSE)
-  st_geometry(geoms_df[[zona]]) <- st_geometry(geom_temp)
-}
-
-# Crear nuevo objeto sf con todas las geometrías y números de distrito
-distritos_union <- do.call("rbind", geoms_df) %>% 
-  mutate(distrito = 1:n())
-
-# Verificar que el objeto sf tenga la columna distrito
-head(distritos_union)
+#con st_union y summarize
+vigo_distritos <- vigo %>% 
+  group_by(CDIS) %>% 
+  summarize(geometry = st_union(geometry))
 
 
-distritos_union <- distritos_union[,-1]
+# Asumiendo que tu data.frame se llama distritos_union
+vigo_distritos <- vigo_distritos %>%
+  mutate(CDIS = sprintf("Dist. %02d", as.integer(CDIS)))
+
+# Limpiar zona de trabajo
+rm(censales_shp, vigo)
+
 
 
 #importar datos de población
@@ -68,11 +54,11 @@ poblacion <- read.csv("vigo.csv", header = TRUE, sep = ";", dec = ",")
 
 #limpiar nombres de columnas en poblacion con janitor
 poblacion <- poblacion %>% clean_names()
-
+vigo_distritos <- vigo_distritos %>% clean_names()
 
 
 #unir distritos_union con poblacion
-vigo_datos <- merge(distritos_union, poblacion, by = "zona", all.x = TRUE, sep = ";", dec = ",") 
+vigo_datos <- merge(vigo_distritos, poblacion, by = "cdis", all.x = TRUE, sep = ";", dec = ",") 
 
 str(vigo_datos)
 
@@ -80,21 +66,24 @@ str(vigo_datos)
 vigo_datos <- vigo_datos   %>% 
     arrange(distrito)
 
-#borrar variable distrito
-vigo_datos <- vigo_datos[,-2]
-
-str(vigo_datos)
-
-#set , as decimal separator
-options(OutDec = ".")
 
 
 
+#crear mapa del % de desplazamientos sobre el total
+vigo_datos %>% 
+  ggplot() +
+  geom_sf(aes(fill = uso_autobus), color = "black", linewidth = .6) +
+  theme_void() +
+  theme(legend.position = "right") +  # Establecer la posición de la leyenda en la parte inferior
+  scale_fill_gradient(name = "Media de\ndesplazamientos",
+                      low = "#FF2E29", high = "#FFD1CE") +  
+  theme(legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12)) +
+  guides(fill = guide_colorbar(barwidth = 2, barheight = 15, title.position = "top")) +
+  geom_sf_label(aes(label = paste0(uso_autobus, "%")), size = 4, color = "black", inherit.aes = FALSE)
 
 
 
-ggplot(vigo_datos) + 
-  geom_sf(color = "black", fill = NA)
 
 
 
@@ -182,7 +171,7 @@ vigo_datos %>%
           #geom_sf_label(aes(label = paste0(zona,": ", round(x_de_movilidad_activa_como_medio_principal * 100, 2), "%")),size = 6,  color = "black", inherit.aes = FALSE)
 
 
-crear mapa de densidad de población
+# crear mapa de densidad de población
 vigo_datos %>%
     ggplot() +
     geom_sf(aes(fill = x_de_movilidad_activa_como_medio_principal), color = "black", linewidth = .6) +
